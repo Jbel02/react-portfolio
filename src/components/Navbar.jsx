@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import DeviceToggle from './DeviceToggle'
+import ThemeToggleButton from './ThemeToggleButton'
 
 const NAV_LINKS = [
   { id: 'about', label: 'About Me' },
@@ -7,12 +9,19 @@ const NAV_LINKS = [
 ]
 
 /**
- * Sticky navigation bar with an active-section indicator and theme switch.
+ * Sticky navigation bar with an active-section indicator, theme switch, and
+ * device-preview toggle.
  *
  * The mobile collapse is React state rather than Bootstrap's JS plugin, so the
  * menu closing after a link tap is just a state update.
  */
-export default function Navbar({ activeSection, theme, onToggleTheme }) {
+export default function Navbar({
+  activeSection,
+  theme,
+  onToggleTheme,
+  deviceView,
+  onDeviceViewChange,
+}) {
   const [isOpen, setIsOpen] = useState(false)
 
   const handleLinkClick = (event, id) => {
@@ -24,6 +33,8 @@ export default function Navbar({ activeSection, theme, onToggleTheme }) {
   return (
     <nav className="navbar navbar-expand-lg sticky-top app-navbar">
       <div className="container">
+        <DeviceToggle value={deviceView} onChange={onDeviceViewChange} />
+
         <a
           className="navbar-brand fw-bold"
           href="#about"
@@ -33,17 +44,10 @@ export default function Navbar({ activeSection, theme, onToggleTheme }) {
         </a>
 
         <div className="d-flex align-items-center gap-2 order-lg-last">
-          <button
-            type="button"
-            className="theme-toggle"
-            onClick={onToggleTheme}
-            aria-pressed={theme === 'dark'}
-            aria-label={
-              theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
-            }
-          >
-            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
-          </button>
+          {/* Hidden via CSS when framed (Tablet/Phone) — the floating
+              instance in App.jsx takes over there instead, since this one
+              lives inside the nav's collapsible subtree. */}
+          <ThemeToggleButton theme={theme} onToggle={onToggleTheme} />
 
           <button
             className="navbar-toggler"
@@ -78,44 +82,5 @@ export default function Navbar({ activeSection, theme, onToggleTheme }) {
         </div>
       </div>
     </nav>
-  )
-}
-
-function SunIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      aria-hidden="true"
-    >
-      <circle cx="12" cy="12" r="4.5" />
-      <line x1="12" y1="2.5" x2="12" y2="4.5" />
-      <line x1="12" y1="19.5" x2="12" y2="21.5" />
-      <line x1="4.2" y1="4.2" x2="5.6" y2="5.6" />
-      <line x1="18.4" y1="18.4" x2="19.8" y2="19.8" />
-      <line x1="2.5" y1="12" x2="4.5" y2="12" />
-      <line x1="19.5" y1="12" x2="21.5" y2="12" />
-      <line x1="4.2" y1="19.8" x2="5.6" y2="18.4" />
-      <line x1="18.4" y1="5.6" x2="19.8" y2="4.2" />
-    </svg>
-  )
-}
-
-function MoonIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
-    </svg>
   )
 }

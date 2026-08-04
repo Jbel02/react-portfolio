@@ -9,8 +9,14 @@ import { useEffect, useState } from 'react'
  * scroll frame.
  *
  * @param {string[]} sectionIds ids to watch, in document order
+ * @param {Element|null} [root] the scrolling container to measure against.
+ *   Pass null for the real browser viewport (Desktop). The Tablet/Phone
+ *   device-preview frame scrolls inside its own fixed-height container
+ *   instead of the document, so IntersectionObserver has to be told that
+ *   container is the root or it will measure against the (non-scrolling)
+ *   viewport and never fire.
  */
-export function useScrollSpy(sectionIds) {
+export function useScrollSpy(sectionIds, root = null) {
   const [activeId, setActiveId] = useState(sectionIds[0])
 
   useEffect(() => {
@@ -29,7 +35,7 @@ export function useScrollSpy(sectionIds) {
       // Top margin clears the sticky navbar; the large bottom margin means a
       // section only counts as "active" once it reaches the upper half of the
       // screen, which stops two sections claiming it at once.
-      { rootMargin: '-90px 0px -55% 0px', threshold: 0 },
+      { root, rootMargin: '-90px 0px -55% 0px', threshold: 0 },
     )
 
     sections.forEach((section) => observer.observe(section))
@@ -37,7 +43,7 @@ export function useScrollSpy(sectionIds) {
     // Cleanup matters here: without it, StrictMode's double-mount in dev would
     // leave a second observer running against stale nodes.
     return () => observer.disconnect()
-  }, [sectionIds])
+  }, [sectionIds, root])
 
   return activeId
 }

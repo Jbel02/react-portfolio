@@ -40,11 +40,57 @@
 
 body {
   margin: 0;
+  /* Static regardless of theme, matching the original landing page: this
+     only becomes visible as the canvas around the Tablet/Phone device
+     frame (view-desktop spans full width, so it never shows through). */
+  background-color: #e9ecef;
+}
+
+.site-wrapper {
+  position: relative;
+  margin: 0 auto;
+  width: 100%;
   background-color: var(--bg);
   color: var(--text);
   transition:
     background-color 0.3s ease,
-    color 0.3s ease;
+    color 0.3s ease,
+    max-width 0.4s ease,
+    border-radius 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.site-wrapper.view-desktop {
+  max-width: 100%;
+  overflow: visible;
+}
+
+/* Tablet/Phone: shrink the whole app into a bordered device frame with a
+   fixed screen size, so layout can be previewed without resizing the real
+   browser window (which is what the CSS media queries elsewhere actually
+   respond to). */
+.site-wrapper.view-tablet,
+.site-wrapper.view-phone {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  overflow: hidden;
+  margin: 1.5rem auto;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.25);
+}
+
+.site-wrapper.view-tablet {
+  max-width: 768px;
+  height: 1024px;
+  border-radius: 1rem;
+  border: 10px solid #212529;
+}
+
+.site-wrapper.view-phone {
+  max-width: 440px;
+  height: 956px;
+  border-radius: 1.5rem;
+  border: 10px solid #212529;
 }
 
 /* Visible only once tabbed to — lets keyboard users jump the navbar. */
@@ -223,6 +269,265 @@ body {
   height: 17px;
 }
 
+/* Floating instance rendered in App.jsx, outside the nav's own DOM subtree
+   (see ThemeToggleButton.jsx / BackToTop.jsx for why). Hidden by default;
+   only the Tablet/Phone frame below reveals it. */
+.theme-toggle--framed {
+  display: none;
+}
+
+.site-wrapper.view-tablet .theme-toggle--framed,
+.site-wrapper.view-phone .theme-toggle--framed {
+  display: flex;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 1030;
+  width: 40px;
+  height: 40px;
+}
+
+.site-wrapper.view-tablet .theme-toggle--framed svg,
+.site-wrapper.view-phone .theme-toggle--framed svg {
+  width: 19px;
+  height: 19px;
+}
+
+/* The navbar-nested toggle is only meant for Desktop — once framed, the
+   floating one above takes over so the button isn't clipped when the
+   sidebar nav below collapses to width: 0. */
+.site-wrapper.view-tablet .app-navbar .theme-toggle:not(.theme-toggle--framed),
+.site-wrapper.view-phone .app-navbar .theme-toggle:not(.theme-toggle--framed) {
+  display: none;
+}
+
+/* ===== Back to Top ===== */
+.back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1030;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background-color: var(--card-bg);
+  color: var(--accent-strong);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.2s ease,
+    visibility 0.25s,
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.back-to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top.is-visible:hover {
+  transform: scale(1.08);
+  border-color: var(--accent-strong);
+}
+
+.back-to-top svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* Within the Tablet/Phone frame, anchor to the frame's own corner instead of
+   the browser viewport: the frame is a fixed-size box, so position: fixed
+   there would place the button against the real window edge, not the
+   simulated screen. */
+.site-wrapper.view-tablet .back-to-top,
+.site-wrapper.view-phone .back-to-top {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  bottom: 12px;
+  right: 12px;
+}
+
+.site-wrapper.view-phone .back-to-top {
+  width: 28px;
+  height: 28px;
+  bottom: 10px;
+  right: 10px;
+}
+
+.site-wrapper.view-tablet .back-to-top svg,
+.site-wrapper.view-phone .back-to-top svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ===== Device View Toggle ===== */
+.device-toggle {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background-color: #16191c;
+  border-radius: 0.5rem;
+  padding: 3px;
+}
+
+.device-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #adb5bd;
+  padding: 0.35rem 0.55rem;
+  border-radius: 0.4rem;
+  line-height: 0;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.device-btn svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.device-btn:hover {
+  color: #fff;
+}
+
+.device-btn.active {
+  background-color: var(--accent-strong);
+  color: #fff;
+}
+
+/* ===== Sidebar Navigation (Tablet & Phone device preview) =====
+   Collapsed by default; revealed on hover of the left-edge trigger zone or
+   of the sidebar itself, and overlays the content instead of pushing it. */
+.nav-hover-zone {
+  display: none;
+}
+
+.site-wrapper.view-tablet .nav-hover-zone,
+.site-wrapper.view-phone .nav-hover-zone {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 16px;
+  height: 100%;
+  z-index: 1024;
+}
+
+.site-wrapper.view-tablet .app-navbar,
+.site-wrapper.view-phone .app-navbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1025;
+  height: 100%;
+  width: 0;
+  padding: 0;
+  opacity: 0;
+  overflow: hidden;
+  border-bottom: none;
+  border-right: 1px solid var(--border);
+  transition: none;
+}
+
+.site-wrapper.view-tablet .nav-hover-zone:hover ~ .app-navbar,
+.site-wrapper.view-tablet .app-navbar:hover {
+  width: 130px;
+  opacity: 1;
+  overflow-y: auto;
+  transition:
+    width 0.25s ease,
+    opacity 0.2s ease;
+}
+
+.site-wrapper.view-phone .nav-hover-zone:hover ~ .app-navbar,
+.site-wrapper.view-phone .app-navbar:hover {
+  width: 92px;
+  opacity: 1;
+  overflow-y: auto;
+  transition:
+    width 0.25s ease,
+    opacity 0.2s ease;
+}
+
+.site-wrapper.view-tablet .app-navbar .container,
+.site-wrapper.view-phone .app-navbar .container {
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  padding: 1rem 0.5rem;
+  gap: 0.5rem;
+}
+
+.site-wrapper.view-tablet .app-navbar .navbar-toggler,
+.site-wrapper.view-phone .app-navbar .navbar-toggler {
+  display: none !important;
+}
+
+.site-wrapper.view-tablet .device-toggle,
+.site-wrapper.view-phone .device-toggle {
+  flex-direction: column;
+  margin: 0 !important;
+}
+
+.site-wrapper.view-tablet .navbar-brand,
+.site-wrapper.view-phone .navbar-brand {
+  margin: 0;
+  font-size: 0.9rem;
+  text-align: center;
+  white-space: normal;
+  line-height: 1.2;
+}
+
+.site-wrapper.view-tablet .navbar-collapse,
+.site-wrapper.view-phone .navbar-collapse {
+  display: flex !important;
+  flex-basis: auto;
+  width: 100%;
+}
+
+.site-wrapper.view-tablet .navbar-nav,
+.site-wrapper.view-phone .navbar-nav {
+  flex-direction: column !important;
+  align-items: center;
+  width: 100%;
+  margin-left: 0 !important;
+  gap: 0.15rem;
+}
+
+.site-wrapper.view-tablet .navbar-nav .nav-link,
+.site-wrapper.view-phone .navbar-nav .nav-link {
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 0.4rem 0.25rem;
+}
+
+.site-wrapper.view-tablet .site-content,
+.site-wrapper.view-phone .site-content {
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
 /* ===== About ===== */
 .skill-list {
   display: flex;
@@ -323,6 +628,31 @@ body {
   100% {
     box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
   }
+}
+
+/* Bootstrap's col-lg-* classes respond to the real browser viewport, not the
+   simulated 768px/440px .site-wrapper frame they render inside, so without
+   this they would stay side-by-side and get crushed. */
+.site-wrapper.view-tablet #about .col-lg-7,
+.site-wrapper.view-phone #about .col-lg-7,
+.site-wrapper.view-tablet #about .col-lg-5,
+.site-wrapper.view-phone #about .col-lg-5 {
+  flex: 0 0 100%;
+  max-width: 100%;
+  width: 100%;
+}
+
+.site-wrapper.view-tablet .section-hero,
+.site-wrapper.view-phone .section-hero {
+  padding: 3.5rem 0;
+}
+
+.site-wrapper.view-tablet .hero-heading {
+  font-size: 2.8rem;
+}
+
+.site-wrapper.view-phone .hero-heading {
+  font-size: 2.2rem;
 }
 
 /* ===== Projects ===== */
@@ -430,6 +760,16 @@ body {
 .btn-outline-accent:hover {
   background-color: var(--accent-strong);
   color: #fff;
+}
+
+/* Force the project grid to stack 1-per-row in the phone frame — same
+   real-viewport-vs-frame-width mismatch as the About columns above. Left
+   un-forced in the tablet frame (768px comfortably fits the 3-up grid). */
+.site-wrapper.view-phone #projects .col-md-6,
+.site-wrapper.view-phone #projects .col-lg-4 {
+  flex: 0 0 100%;
+  max-width: 100%;
+  width: 100%;
 }
 
 /* ===== Modal ===== */
@@ -565,6 +905,35 @@ body {
 .contact-link-icon svg {
   width: 16px;
   height: 16px;
+}
+
+/* Same real-viewport-vs-frame-width fix, for the phone frame only, plus a
+   stacking order swap so the profile card ("Let's work together") reads
+   above the form on a single narrow column. */
+.site-wrapper.view-phone .contact-banner {
+  flex-direction: column;
+}
+
+.site-wrapper.view-phone .contact-form-col,
+.site-wrapper.view-phone .contact-profile-col {
+  flex: 0 0 100%;
+  max-width: 100%;
+  width: 100%;
+  padding: 1.5rem !important;
+}
+
+.site-wrapper.view-phone .contact-profile-col {
+  order: -1;
+}
+
+.site-wrapper.view-phone #contact .col-sm-6 {
+  flex: 0 0 100%;
+  max-width: 100%;
+  width: 100%;
+}
+
+.site-wrapper.view-phone .contact-headline {
+  font-size: 1.6rem;
 }
 
 /* ===== Footer ===== */
