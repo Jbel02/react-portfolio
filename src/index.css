@@ -87,8 +87,14 @@ body {
 }
 
 .site-wrapper.view-phone {
+  /* Capped to fit the browser's own viewport height (minus this frame's
+     1.5rem top/bottom margin) instead of a fixed px value, so the page
+     itself never needs a scrollbar — width follows via aspect-ratio so the
+     frame keeps its phone proportions as it shrinks on shorter windows. */
+  width: auto;
   max-width: 460px;
-  height: 926px;
+  aspect-ratio: 460 / 926;
+  height: min(926px, calc(100vh - 3rem));
   border-radius: 1.5rem;
   border: 10px solid #212529;
 }
