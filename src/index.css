@@ -361,7 +361,9 @@ body {
 .site-wrapper.view-phone .back-to-top {
   width: 28px;
   height: 28px;
-  bottom: 10px;
+  /* Cleared above the fixed bottom tab bar (78px tall) instead of hugging
+     the frame's bottom edge like Tablet does. */
+  bottom: 90px;
   right: 10px;
 }
 
@@ -411,15 +413,15 @@ body {
   color: #fff;
 }
 
-/* ===== Sidebar Navigation (Tablet & Phone device preview) =====
+/* ===== Sidebar Navigation (Tablet device preview) =====
    Collapsed by default; revealed on hover of the left-edge trigger zone or
-   of the sidebar itself, and overlays the content instead of pushing it. */
+   of the sidebar itself, and overlays the content instead of pushing it.
+   Phone uses a different layout entirely — see the section below. */
 .nav-hover-zone {
   display: none;
 }
 
-.site-wrapper.view-tablet .nav-hover-zone,
-.site-wrapper.view-phone .nav-hover-zone {
+.site-wrapper.view-tablet .nav-hover-zone {
   display: block;
   position: absolute;
   top: 0;
@@ -429,8 +431,7 @@ body {
   z-index: 1024;
 }
 
-.site-wrapper.view-tablet .app-navbar,
-.site-wrapper.view-phone .app-navbar {
+.site-wrapper.view-tablet .app-navbar {
   position: absolute;
   top: 0;
   left: 0;
@@ -455,18 +456,7 @@ body {
     opacity 0.2s ease;
 }
 
-.site-wrapper.view-phone .nav-hover-zone:hover ~ .app-navbar,
-.site-wrapper.view-phone .app-navbar:hover {
-  width: 92px;
-  opacity: 1;
-  overflow-y: auto;
-  transition:
-    width 0.25s ease,
-    opacity 0.2s ease;
-}
-
-.site-wrapper.view-tablet .app-navbar .container,
-.site-wrapper.view-phone .app-navbar .container {
+.site-wrapper.view-tablet .app-navbar .container {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
@@ -482,14 +472,12 @@ body {
   display: none !important;
 }
 
-.site-wrapper.view-tablet .device-toggle,
-.site-wrapper.view-phone .device-toggle {
+.site-wrapper.view-tablet .device-toggle {
   flex-direction: column;
   margin: 0 !important;
 }
 
-.site-wrapper.view-tablet .navbar-brand,
-.site-wrapper.view-phone .navbar-brand {
+.site-wrapper.view-tablet .navbar-brand {
   margin: 0;
   font-size: 0.9rem;
   text-align: center;
@@ -497,15 +485,13 @@ body {
   line-height: 1.2;
 }
 
-.site-wrapper.view-tablet .navbar-collapse,
-.site-wrapper.view-phone .navbar-collapse {
+.site-wrapper.view-tablet .navbar-collapse {
   display: flex !important;
   flex-basis: auto;
   width: 100%;
 }
 
-.site-wrapper.view-tablet .navbar-nav,
-.site-wrapper.view-phone .navbar-nav {
+.site-wrapper.view-tablet .navbar-nav {
   flex-direction: column !important;
   align-items: center;
   width: 100%;
@@ -513,8 +499,7 @@ body {
   gap: 0.15rem;
 }
 
-.site-wrapper.view-tablet .navbar-nav .nav-link,
-.site-wrapper.view-phone .navbar-nav .nav-link {
+.site-wrapper.view-tablet .navbar-nav .nav-link {
   font-size: 0.85rem;
   text-align: center;
   padding: 0.4rem 0.25rem;
@@ -526,6 +511,120 @@ body {
   width: 100%;
   height: 100%;
   overflow-y: auto;
+}
+
+/* ===== Phone device preview =====
+   No hover-reveal sidebar: the device toggle and brand stay pinned in a
+   static top bar, and section links move into a fixed bottom tab bar with a
+   sliding highlight that tracks the active section — closer to a native
+   iOS tab bar than the Tablet/Desktop navbar. */
+.site-wrapper.view-phone .nav-hover-zone {
+  display: none;
+}
+
+.site-wrapper.view-phone .app-navbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1025;
+  width: 100%;
+  height: 56px;
+  padding: 0;
+  opacity: 1;
+  overflow: visible;
+}
+
+.site-wrapper.view-phone .app-navbar .container {
+  position: relative;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  padding: 0 14px;
+}
+
+.site-wrapper.view-phone .navbar-brand {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.site-wrapper.view-phone .navbar-collapse {
+  display: none !important;
+}
+
+.site-wrapper.view-phone .site-content {
+  padding-top: 56px;
+  padding-bottom: 78px;
+  box-sizing: border-box;
+}
+
+/* Bottom tab bar: About Me / Projects / Contact Me, left-to-right, matching
+   NAV_LINKS order. The highlight pill's position is driven by --tab-index,
+   set inline from the active section's index (0/1/2). */
+.phone-tab-bar {
+  display: none;
+}
+
+.site-wrapper.view-phone .phone-tab-bar {
+  display: flex;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 1026;
+  width: 100%;
+  height: 78px;
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+  background-color: var(--nav-bg);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--border);
+}
+
+.phone-tab-highlight {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  width: calc((100% - 24px) / 3);
+  height: calc(100% - 16px);
+  border-radius: 999px;
+  background-color: var(--accent-glow);
+  transform: translateX(calc(var(--tab-index, 0) * 100%));
+  transition: transform 0.3s ease;
+  pointer-events: none;
+}
+
+.phone-tab-link {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.phone-tab-link.active {
+  color: var(--accent-strong);
+}
+
+.phone-tab-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.phone-tab-label {
+  font-size: 0.68rem;
+  font-weight: 600;
 }
 
 /* ===== About ===== */
