@@ -7,6 +7,8 @@ const EMPTY_FORM = {
   message: '',
 }
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 export default function Contact() {
   // Controlled inputs: React state is the single source of truth for the form,
   // so validation and reset are plain state operations.
@@ -30,7 +32,7 @@ export default function Contact() {
   const validate = () => {
     const found = {}
     if (!form.name.trim()) found.name = 'Please enter your name.'
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+    if (!EMAIL_PATTERN.test(form.email)) {
       found.email = 'Please enter a valid email address.'
     }
     if (!form.message.trim()) found.message = 'Please enter a message.'
@@ -100,6 +102,13 @@ export default function Contact() {
                       {errors.email}
                     </div>
                   )}
+                  {!errors.email &&
+                    form.email.length > 0 &&
+                    !EMAIL_PATTERN.test(form.email) && (
+                      <div className="form-text text-danger">
+                        Please enter a valid email address.
+                      </div>
+                    )}
                 </div>
               </div>
 
