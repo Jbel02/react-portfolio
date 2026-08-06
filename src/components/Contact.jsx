@@ -69,7 +69,7 @@ export default function Contact() {
                     id="name"
                     name="name"
                     autoComplete="name"
-                    className={`form-control${errors.name ? ' is-invalid' : ''}`}
+                    className={`form-control${errors.name ? ' is-invalid' : form.name.trim() ? ' is-valid' : ''}`}
                     placeholder="Johnbel Malinana"
                     value={form.name}
                     onChange={handleChange}
@@ -91,7 +91,7 @@ export default function Contact() {
                     id="email"
                     name="email"
                     autoComplete="email"
-                    className={`form-control${errors.email ? ' is-invalid' : ''}`}
+                    className={`form-control${errors.email ? ' is-invalid' : EMAIL_PATTERN.test(form.email) ? ' is-valid' : ''}`}
                     placeholder="jbel@company.com"
                     value={form.email}
                     onChange={handleChange}
@@ -134,7 +134,7 @@ export default function Contact() {
                   id="message"
                   name="message"
                   rows="5"
-                  className={`form-control${errors.message ? ' is-invalid' : ''}`}
+                  className={`form-control${errors.message ? ' is-invalid' : form.message.trim() ? ' is-valid' : ''}`}
                   placeholder="Tell me about your project.."
                   value={form.message}
                   onChange={handleChange}
