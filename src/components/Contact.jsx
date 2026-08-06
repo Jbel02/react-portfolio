@@ -165,7 +165,7 @@ export default function Contact() {
 
             <ul className="contact-links list-unstyled mb-0">
               <li>
-                <a href="mailto:malinanajohnbel@gmail.com">
+                <span className="contact-link-disabled">
                   <span className="contact-link-icon" aria-hidden="true">
                     <svg
                       viewBox="0 0 24 24"
@@ -180,7 +180,7 @@ export default function Contact() {
                     </svg>
                   </span>
                   malinanajohnbel@gmail.com
-                </a>
+                </span>
               </li>
               <li>
                 <span className="contact-link-disabled">
