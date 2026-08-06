@@ -87,8 +87,8 @@ body {
 }
 
 .site-wrapper.view-phone {
-  max-width: 440px;
-  height: 956px;
+  max-width: 460px;
+  height: 926px;
   border-radius: 1.5rem;
   border: 10px solid #212529;
 }
@@ -730,7 +730,7 @@ body {
 }
 
 /* Bootstrap's col-lg-* classes respond to the real browser viewport, not the
-   simulated 768px/440px .site-wrapper frame they render inside, so without
+   simulated 768px/460px .site-wrapper frame they render inside, so without
    this they would stay side-by-side and get crushed. */
 .site-wrapper.view-tablet #about .col-lg-7,
 .site-wrapper.view-phone #about .col-lg-7,
