@@ -14,7 +14,7 @@ const SKILLS = [
   'CSS3',
   'Bootstrap',
   'Figma',
-  'Git',
+  'Git & Github',
 ]
 
 export default function About() {
