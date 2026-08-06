@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "msedge",
+      "request": "launch",
+      "name": "Run portfolio-react",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "vite: dev server"
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Run portfolio-react (Chrome)",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "vite: dev server"
+    }
+  ]
+}
